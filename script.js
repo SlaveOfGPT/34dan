@@ -92,4 +92,42 @@ function showResults() {
         `소요 시간: ${formattedTime}`;
 }
 
+function saveScore() {
+    const previousScores = JSON.parse(localStorage.getItem("scores")) || [];
+    const newScore = {
+        score: correctAnswers,
+        time: timeElapsed,
+        date: new Date().toLocaleString()
+    };
+    previousScores.push(newScore);
+    previousScores.sort((a, b) => b.score - a.score || a.time - b.time); // 점수 내림차순, 동일 점수는 시간 오름차순
+    localStorage.setItem("scores", JSON.stringify(previousScores));
+    showRankings(previousScores);
+}
+
+function showRankings(scores) {
+    let rankingsHTML = "<h2>순위</h2><ol>";
+    scores.forEach((score, index) => {
+        rankingsHTML += `<li>순위 ${index + 1}: 점수: ${score.score}, 시간: ${score.time}초, ${score.date}</li>`;
+    });
+    rankingsHTML += "</ol>";
+    document.getElementById("rankings").innerHTML = rankingsHTML;
+}
+
+function endGame() {
+    stopTimer();
+    saveScore();
+}
+
+// 게임 종료 후 순위 표시
+document.getElementById("submit").onclick = function() {
+    const userAnswer = parseInt(document.getElementById("answer").value);
+    if (userAnswer === correctAnswer) {
+        correctAnswers++;
+    }
+    document.getElementById("answer").value = ""; // 입력창 비우기
+    askQuestion(); // 다음 문제 출제
+    endGame(); // 게임 종료 후 순위 저장
+};
+
 
