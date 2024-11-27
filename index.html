@@ -1,304 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>구구단을 외자</title>
+    <title>게임</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            margin: 0;
-            padding: 0;
-            text-align: center;
-        }
-
-        h1 {
-            margin-top: 20px;
-            color: #4CAF50;
-        }
-
-        #timer {
-            font-size: 24px;
-            margin-top: 20px;
-        }
-
-        #question {
-            font-size: 30px;
-            margin-top: 30px;
-        }
-
-        input[type="number"], input[type="text"] {
-            font-size: 18px;
-            padding: 5px;
-            margin-top: 10px;
-        }
-
-        button {
-            font-size: 18px;
-            padding: 10px 20px;
-            margin-top: 10px;
-            cursor: pointer;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        #score {
-            font-size: 20px;
-            margin-top: 20px;
-        }
-
-        /* 순위 화면 스타일 */
-        #rankingsScreen {
-            display: none;
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-top: 30px;
-        }
-
-        #rankings {
-            font-size: 18px;
-            text-align: left;
-            margin: 0 auto;
-            width: 80%;
-        }
-
-        #rankings h2 {
-            text-align: center;
-            color: #4CAF50;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            font-size: 16px;
-            text-align: center;
-        }
-
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px;
-        }
-
-        td {
-            padding: 10px;
-        }
-
-        .rank-item {
-            background-color: #f9f9f9;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .rank-item:nth-child(even) {
-            background-color: #f1f1f1;
-        }
-
-        .rank-item:hover {
-            background-color: #f0f0f0;
-        }
-
-        /* 게임 화면 스타일 */
-        #gameScreen, #endScreen, #startScreen {
-            display: none;
-        }
-
-        /* 버튼 그룹 */
-        .button-group {
-            margin-top: 20px;
-        }
-
-        .button-group button {
-            margin: 5px;
-        }
+        /* 필요한 스타일 추가 */
     </style>
 </head>
 <body>
-    <h1>구구단 외워라.</h1>
 
-    <!-- 첫 번째 화면 (문제 수 선택 및 순위 보기) -->
+    <!-- 시작 화면 -->
     <div id="startScreen">
-        <div class="button-group">
-            <!-- 문제 수 선택 버튼 -->
-            <button id="btn10">10문제</button>
-            <button id="btn20">20문제</button>
-            <button id="btn30">30문제</button>
-            <button id="btn50">50문제</button>
-        </div>
+        <button id="viewRankings">순위 보기</button>
+        <button id="startGameBtn" onclick="startGame()">게임 시작</button>
+    </div>
 
-        <button id="viewRankings">순위 보기</button> <!-- 순위 보기 버튼 추가 -->
+    <!-- 게임 화면 -->
+    <div id="gameScreen" style="display: none;">
+        <h2 id="score">맞은 문제 수: 0</h2>
+        <h3 id="timer">시간: 0초</h3>
     </div>
 
     <!-- 순위 화면 -->
-    <div id="rankingsScreen">
+    <div id="rankingsScreen" style="display: none;">
         <h2>순위</h2>
-        <div id="rankings"></div>
-        <button id="backToStart">메인 화면으로 돌아가기</button> <!-- 메인 화면으로 돌아가기 버튼 추가 -->
+        <ul id="rankingsList"></ul>
+        <button id="backToStart">메인 화면으로 돌아가기</button>
     </div>
 
-    <!-- 두 번째 화면 (문제 풀이 화면) -->
-    <div id="gameScreen">
-        <p id="question"></p>
-        <input type="number" id="answer" placeholder="정답을 입력하세요">
-        <button id="submit">제출</button>
-
-        <p id="timer">시간: 0초</p> <!-- 타이머 표시 -->
-        <p id="score">맞은 문제 수: 0</p> <!-- 맞은 문제 수 표시 -->
+    <!-- 틀린 문제 다시 풀기 화면 -->
+    <div id="wrongAnswersScreen" style="display: none;">
+        <h2>틀린 문제들</h2>
+        <ul id="wrongAnswersList"></ul>
+        <button id="backToGameFromWrongAnswers">게임으로 돌아가기</button>
     </div>
 
-    <!-- 게임 종료 후 결과 화면 -->
-    <div id="endScreen">
-        <h2>게임 종료</h2>
-        <p>맞은 문제 수: <span id="finalScore"></span></p>
-        <p>소요 시간: <span id="finalTime"></span>초</p>
-        <label for="playerName">이름: </label>
-        <input type="text" id="playerName" placeholder="이름을 입력하세요" required>
-        <button id="saveScore">점수 저장</button>
-        <button id="showRankingsAfterSave">순위 보기</button> <!-- 점수 저장 후 순위 보기 버튼 추가 -->
-        <button id="backToStartFromEnd">메인 화면으로 돌아가기</button> <!-- 메인 화면으로 돌아가기 버튼 추가 -->
-    </div>
+    <!-- 점수 저장 후 순위 보기 -->
+    <button id="saveScore">점수 저장</button>
+    <button id="showRankingsAfterSave" style="display: none;">저장 후 순위 보기</button>
+
+    <button id="retryWrongAnswers" style="display: none;">틀린 문제 다시 풀기</button>
 
     <script>
-        // 페이지 로딩 시 startScreen이 보이도록 설정
-        window.onload = function() {
-            document.getElementById("startScreen").style.display = "block";
-        };
-
-        let startTime = null;
-        let timerInterval = null;
-        let timeElapsed = 0;
-        let correctAnswers = 0;
-        let totalQuestions = 0;
-        let questionsAnswered = 0;
-
-        // 게임 시작 시 타이머 시작
-        function startTimer() {
-            startTime = Date.now();
-            timerInterval = setInterval(function() {
-                timeElapsed = Math.floor((Date.now() - startTime) / 1000); // 경과 시간 (초 단위)
-                document.getElementById("timer").textContent = "시간: " + timeElapsed + "초";
-            }, 1000);
-        }
-
-        // 게임 종료 시 타이머 멈추기
-        function stopTimer() {
-            clearInterval(timerInterval);
-        }
-
-        // 문제 출제 함수
-        function askQuestion() {
-            const num1 = Math.floor(Math.random() * 9) + 1;
-            const num2 = Math.floor(Math.random() * 9) + 1;
-            const correctAnswer = num1 * num2;
-
-            document.getElementById("question").textContent = `${num1} x ${num2} = ?`;
-
-            document.getElementById("submit").onclick = function() {
-                const userAnswer = parseInt(document.getElementById("answer").value);
-                if (userAnswer === correctAnswer) {
-                    correctAnswers++;
-                    document.getElementById("score").textContent = "맞은 문제 수: " + correctAnswers;
-                }
-                questionsAnswered++;
-
-                // 모든 문제가 끝났을 때 게임 종료
-                if (questionsAnswered >= totalQuestions) {
-                    endGame();
-                } else {
-                    document.getElementById("answer").value = ""; // 입력창 비우기
-                    askQuestion(); // 다음 문제 출제
-                }
-            };
-        }
-
-        // 엔터 키 이벤트를 사용하여 문제 제출
-        document.getElementById("answer").addEventListener("keydown", function(event) {
-            if (event.key === "Enter") {
-                document.getElementById("submit").click();
-            }
-        });
-
-        // 게임 종료 후 결과 화면
-        function endGame() {
-            stopTimer(); // 게임 종료 시 타이머 멈추기
-            document.getElementById("finalScore").textContent = correctAnswers;
-            document.getElementById("finalTime").textContent = timeElapsed;
-
-            // 화면 전환: 게임 화면 숨기고 결과 화면 보이기
-            document.getElementById("gameScreen").style.display = "none";
-            document.getElementById("endScreen").style.display = "block";
-        }
-
-        // 점수 저장 함수
-        function saveScore() {
-            const playerName = document.getElementById("playerName").value.trim();
-            if (playerName === "") {
-                alert("이름을 입력하세요!");
-                return;
-            }
-
-            const previousScores = JSON.parse(localStorage.getItem("scores")) || [];
-            const newScore = {
-                name: playerName,
-                score: correctAnswers,
-                time: timeElapsed,
-                date: new Date().toLocaleString()
-            };
-            previousScores.push(newScore);
-            previousScores.sort((a, b) => b.score - a.score || a.time - b.time); // 점수 내림차순, 동일 점수는 시간 오름차순
-            localStorage.setItem("scores", JSON.stringify(previousScores));
-            showRankings(previousScores);
-        }
-
-        // 순위 표시 함수
-        function showRankings(scores) {
-            let rankingsHTML = "<table><thead><tr><th>순위</th><th>이름</th><th>점수</th><th>시간</th></tr></thead><tbody>";
-            scores.forEach((score, index) => {
-                rankingsHTML += `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${score.name}</td>
-                        <td>${score.score}</td>
-                        <td>${score.time}초</td>
-                    </tr>
-                `;
-            });
-            rankingsHTML += "</tbody></table>";
-            document.getElementById("rankings").innerHTML = rankingsHTML;
-            document.getElementById("rankingsScreen").style.display = "block";
-            document.getElementById("startScreen").style.display = "none";
-        }
-
-        // 버튼 이벤트 핸들러
-        document.getElementById("btn10").addEventListener("click", function() {
-            totalQuestions = 10;
-            startGame();
-        });
-        document.getElementById("btn20").addEventListener("click", function() {
-            totalQuestions = 20;
-            startGame();
-        });
-        document.getElementById("btn30").addEventListener("click", function() {
-            totalQuestions = 30;
-            startGame();
-        });
-        document.getElementById("btn50").addEventListener("click", function() {
-            totalQuestions = 50;
-            startGame();
-        });
+        let correctAnswers = 0; // 맞은 문제 수
+        let questionsAnswered = 0; // 답한 문제 수
+        let wrongAnswers = []; // 틀린 문제 저장
+        let correctAnswersList = []; // 정답 저장
 
         // 순위 보기 버튼 클릭 시 순위 화면 표시
         document.getElementById("viewRankings").addEventListener("click", function() {
@@ -312,9 +60,34 @@
             document.getElementById("startScreen").style.display = "block";
         });
 
-        document.getElementById("backToStartFromEnd").addEventListener("click", function() {
-            document.getElementById("endScreen").style.display = "none";
-            document.getElementById("startScreen").style.display = "block";
+        // 게임 화면에서 틀린 문제 다시 풀기 버튼 처리
+        document.getElementById("retryWrongAnswers").addEventListener("click", function() {
+            document.getElementById("gameScreen").style.display = "none";
+            document.getElementById("wrongAnswersScreen").style.display = "block";
+            
+            // 틀린 문제 표시
+            const wrongAnswersListElement = document.getElementById("wrongAnswersList");
+            wrongAnswersListElement.innerHTML = ''; // 기존 내용 지우기
+            
+            wrongAnswers.forEach((answer, index) => {
+                const li = document.createElement("li");
+                li.textContent = `${answer.question} (당신의 답: ${answer.userAnswer}, 정답: ${answer.correctAnswer})`;
+                wrongAnswersListElement.appendChild(li);
+
+                // 다시 풀 수 있는 버튼 추가
+                const retryButton = document.createElement("button");
+                retryButton.textContent = "다시 풀기";
+                retryButton.addEventListener("click", function() {
+                    askQuestion(); // 새로운 문제 출제
+                });
+                li.appendChild(retryButton);
+            });
+        });
+
+        // 게임 화면으로 돌아가기
+        document.getElementById("backToGameFromWrongAnswers").addEventListener("click", function() {
+            document.getElementById("wrongAnswersScreen").style.display = "none";
+            document.getElementById("gameScreen").style.display = "block";
         });
 
         // 점수 저장 후 순위 보기 버튼 처리
@@ -322,12 +95,39 @@
         document.getElementById("showRankingsAfterSave").addEventListener("click", function() {
             const scores = JSON.parse(localStorage.getItem("scores")) || [];
             showRankings(scores);
+            document.getElementById("retryWrongAnswers").style.display = "inline-block"; // 틀린 문제 다시 풀기 버튼 보이기
         });
+
+        // 점수 저장 함수
+        function saveScore() {
+            const scores = JSON.parse(localStorage.getItem("scores")) || [];
+            const playerName = prompt("이름을 입력해주세요:");
+            scores.push({ name: playerName, score: correctAnswers });
+            localStorage.setItem("scores", JSON.stringify(scores));
+            document.getElementById("showRankingsAfterSave").style.display = "inline-block"; // 순위 보기 버튼 보이기
+        }
+
+        // 순위 보기 함수
+        function showRankings(scores) {
+            document.getElementById("rankingsScreen").style.display = "block";
+            document.getElementById("startScreen").style.display = "none";
+
+            const rankingsList = document.getElementById("rankingsList");
+            rankingsList.innerHTML = ''; // 기존 내용 지우기
+
+            scores.sort((a, b) => b.score - a.score); // 점수 내림차순 정렬
+            scores.forEach(score => {
+                const li = document.createElement("li");
+                li.textContent = `${score.name}: ${score.score}`;
+                rankingsList.appendChild(li);
+            });
+        }
 
         // 게임 시작 함수
         function startGame() {
             correctAnswers = 0;
             questionsAnswered = 0;
+            wrongAnswers = [];
             document.getElementById("score").textContent = "맞은 문제 수: " + correctAnswers;
             document.getElementById("timer").textContent = "시간: 0초";
             document.getElementById("gameScreen").style.display = "block";
@@ -335,6 +135,35 @@
             startTimer(); // 타이머 시작
             askQuestion(); // 첫 번째 문제 출제
         }
+
+        // 문제 출제 함수
+        function askQuestion() {
+            // 예시: 간단한 문제 출제
+            const question = "2 + 2 = ?";
+            const correctAnswer = 4;
+            const userAnswer = prompt(question); // 유저 답을 입력 받음
+
+            if (parseInt(userAnswer) === correctAnswer) {
+                correctAnswers++;
+            } else {
+                wrongAnswers.push({ question, userAnswer, correctAnswer });
+            }
+
+            // 문제 수 카운트 및 점수 표시
+            questionsAnswered++;
+            document.getElementById("score").textContent = "맞은 문제 수: " + correctAnswers;
+        }
+
+        // 타이머 시작
+        function startTimer() {
+            let time = 0;
+            const timerInterval = setInterval(function() {
+                time++;
+                document.getElementById("timer").textContent = "시간: " + time + "초";
+            }, 1000);
+        }
+
     </script>
+
 </body>
 </html>
