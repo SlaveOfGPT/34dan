@@ -1,169 +1,179 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>게임</title>
-    <style>
-        /* 필요한 스타일 추가 */
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>4현 베이스 코드 연습</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 20px;
+    }
+    table {
+      margin: 0 auto;
+      border-collapse: collapse;
+      width: 80%;
+    }
+    th, td {
+      border: 1px solid #000;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #f0f0f0;
+    }
+    .note {
+      font-weight: bold;
+      color: blue;
+    }
+    #bass-practice {
+      margin-top: 30px;
+    }
+    #practice-container {
+      margin-top: 20px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .difficulty-button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .difficulty-button:hover {
+      background-color: #ddd;
+    }
+  </style>
 </head>
 <body>
+  <h1>4현 베이스 기타 코드 연습</h1>
 
-    <!-- 시작 화면 -->
-    <div id="startScreen">
-        <button id="viewRankings">순위 보기</button>
-        <button id="startGameBtn" onclick="startGame()">게임 시작</button>
+  <!-- 4현 베이스 코드표 (가로, 세로 바꾼 구조) -->
+  <div>
+    <h3>4현 베이스 코드표</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>프렛</th>
+          <th>0 (개방현)</th>
+          <th>1</th>
+          <th>2</th>
+          <th>3</th>
+          <th>4</th>
+          <th>5</th>
+          <th>6</th>
+          <th>7</th>
+          <th>8</th>
+          <th>9</th>
+          <th>10</th>
+          <th>11</th>
+          <th>12</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>G (1현)</td>
+          <td class="note">G</td>
+          <td>G#/Ab</td>
+          <td class="note">A</td>
+          <td class="note">A#/Bb</td>
+          <td class="note">B</td>
+          <td class="note">C</td>
+          <td class="note">C#/Db</td>
+          <td class="note">D</td>
+          <td class="note">D#/Eb</td>
+          <td class="note">E</td>
+          <td class="note">F</td>
+          <td class="note">F#/Gb</td>
+          <td class="note">G</td>
+        </tr>
+        <tr>
+          <td>D (2현)</td>
+          <td class="note">D</td>
+          <td class="note">D#/Eb</td>
+          <td class="note">E</td>
+          <td class="note">F</td>
+          <td class="note">F#/Gb</td>
+          <td class="note">G</td>
+          <td class="note">G#/Ab</td>
+          <td class="note">A</td>
+          <td class="note">A#/Bb</td>
+          <td class="note">B</td>
+          <td class="note">C</td>
+          <td class="note">C#/Db</td>
+          <td class="note">D</td>
+        </tr>
+        <tr>
+          <td>A (3현)</td>
+          <td class="note">A</td>
+          <td class="note">A#/Bb</td>
+          <td class="note">B</td>
+          <td class="note">C</td>
+          <td class="note">C#/Db</td>
+          <td class="note">D</td>
+          <td class="note">D#/Eb</td>
+          <td class="note">E</td>
+          <td class="note">F</td>
+          <td class="note">F#/Gb</td>
+          <td class="note">G</td>
+          <td class="note">G#/Ab</td>
+          <td class="note">A</td>
+        </tr>
+        <tr>
+          <td>E (4현)</td>
+          <td class="note">E</td>
+          <td class="note">F</td>
+          <td class="note">F#/Gb</td>
+          <td class="note">G</td>
+          <td class="note">G#/Ab</td>
+          <td class="note">A</td>
+          <td class="note">A#/Bb</td>
+          <td class="note">B</td>
+          <td class="note">C</td>
+          <td class="note">C#/Db</td>
+          <td class="note">D</td>
+          <td class="note">D#/Eb</td>
+          <td class="note">E</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 난이도 버튼 추가 -->
+  <div id="bass-practice">
+    <h3>베이스 코드 연습</h3>
+    <div>
+      <button class="difficulty-button" onclick="startPractice('easy')">4초</button>
+      <button class="difficulty-button" onclick="startPractice('medium')">2초</button>
+      <button class="difficulty-button" onclick="startPractice('hard')">1초</button>
+      <button class="difficulty-button" onclick="startPractice('half')">0.5초</button>
     </div>
+    <button onclick="stopPractice()">연습 중단</button>
+    <div id="practice-container"></div>
+  </div>
 
-    <!-- 게임 화면 -->
-    <div id="gameScreen" style="display: none;">
-        <h2 id="score">맞은 문제 수: 0</h2>
-        <h3 id="timer">시간: 0초</h3>
-    </div>
+  <script>
+    const notes = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+    const difficultyTimes = { 'easy': 4000, 'medium': 2000, 'hard': 1000, 'half': 500 };
+    let practiceInterval;
 
-    <!-- 순위 화면 -->
-    <div id="rankingsScreen" style="display: none;">
-        <h2>순위</h2>
-        <ul id="rankingsList"></ul>
-        <button id="backToStart">메인 화면으로 돌아가기</button>
-    </div>
+    function startPractice(difficulty) {
+      const practiceContainer = document.getElementById('practice-container');
+      practiceContainer.innerHTML = ''; // 초기화
 
-    <!-- 틀린 문제 다시 풀기 화면 -->
-    <div id="wrongAnswersScreen" style="display: none;">
-        <h2>틀린 문제들</h2>
-        <ul id="wrongAnswersList"></ul>
-        <button id="backToGameFromWrongAnswers">게임으로 돌아가기</button>
-    </div>
+      const timeInterval = difficultyTimes[difficulty] || difficultyTimes['easy'];
 
-    <!-- 점수 저장 후 순위 보기 -->
-    <button id="saveScore">점수 저장</button>
-    <button id="showRankingsAfterSave" style="display: none;">저장 후 순위 보기</button>
+      practiceInterval = setInterval(() => {
+        const randomNote = notes[Math.floor(Math.random() * notes.length)];
+        practiceContainer.innerHTML = `<p>${randomNote}</p>`;
+      }, timeInterval);
+    }
 
-    <button id="retryWrongAnswers" style="display: none;">틀린 문제 다시 풀기</button>
-
-    <script>
-        let correctAnswers = 0; // 맞은 문제 수
-        let questionsAnswered = 0; // 답한 문제 수
-        let wrongAnswers = []; // 틀린 문제 저장
-        let correctAnswersList = []; // 정답 저장
-
-        // 순위 보기 버튼 클릭 시 순위 화면 표시
-        document.getElementById("viewRankings").addEventListener("click", function() {
-            const scores = JSON.parse(localStorage.getItem("scores")) || [];
-            showRankings(scores);
-        });
-
-        // 메인 화면으로 돌아가기 버튼 처리
-        document.getElementById("backToStart").addEventListener("click", function() {
-            document.getElementById("rankingsScreen").style.display = "none";
-            document.getElementById("startScreen").style.display = "block";
-        });
-
-        // 게임 화면에서 틀린 문제 다시 풀기 버튼 처리
-        document.getElementById("retryWrongAnswers").addEventListener("click", function() {
-            document.getElementById("gameScreen").style.display = "none";
-            document.getElementById("wrongAnswersScreen").style.display = "block";
-            
-            // 틀린 문제 표시
-            const wrongAnswersListElement = document.getElementById("wrongAnswersList");
-            wrongAnswersListElement.innerHTML = ''; // 기존 내용 지우기
-            
-            wrongAnswers.forEach((answer, index) => {
-                const li = document.createElement("li");
-                li.textContent = `${answer.question} (당신의 답: ${answer.userAnswer}, 정답: ${answer.correctAnswer})`;
-                wrongAnswersListElement.appendChild(li);
-
-                // 다시 풀 수 있는 버튼 추가
-                const retryButton = document.createElement("button");
-                retryButton.textContent = "다시 풀기";
-                retryButton.addEventListener("click", function() {
-                    askQuestion(); // 새로운 문제 출제
-                });
-                li.appendChild(retryButton);
-            });
-        });
-
-        // 게임 화면으로 돌아가기
-        document.getElementById("backToGameFromWrongAnswers").addEventListener("click", function() {
-            document.getElementById("wrongAnswersScreen").style.display = "none";
-            document.getElementById("gameScreen").style.display = "block";
-        });
-
-        // 점수 저장 후 순위 보기 버튼 처리
-        document.getElementById("saveScore").addEventListener("click", saveScore);
-        document.getElementById("showRankingsAfterSave").addEventListener("click", function() {
-            const scores = JSON.parse(localStorage.getItem("scores")) || [];
-            showRankings(scores);
-            document.getElementById("retryWrongAnswers").style.display = "inline-block"; // 틀린 문제 다시 풀기 버튼 보이기
-        });
-
-        // 점수 저장 함수
-        function saveScore() {
-            const scores = JSON.parse(localStorage.getItem("scores")) || [];
-            const playerName = prompt("이름을 입력해주세요:");
-            scores.push({ name: playerName, score: correctAnswers });
-            localStorage.setItem("scores", JSON.stringify(scores));
-            document.getElementById("showRankingsAfterSave").style.display = "inline-block"; // 순위 보기 버튼 보이기
-        }
-
-        // 순위 보기 함수
-        function showRankings(scores) {
-            document.getElementById("rankingsScreen").style.display = "block";
-            document.getElementById("startScreen").style.display = "none";
-
-            const rankingsList = document.getElementById("rankingsList");
-            rankingsList.innerHTML = ''; // 기존 내용 지우기
-
-            scores.sort((a, b) => b.score - a.score); // 점수 내림차순 정렬
-            scores.forEach(score => {
-                const li = document.createElement("li");
-                li.textContent = `${score.name}: ${score.score}`;
-                rankingsList.appendChild(li);
-            });
-        }
-
-        // 게임 시작 함수
-        function startGame() {
-            correctAnswers = 0;
-            questionsAnswered = 0;
-            wrongAnswers = [];
-            document.getElementById("score").textContent = "맞은 문제 수: " + correctAnswers;
-            document.getElementById("timer").textContent = "시간: 0초";
-            document.getElementById("gameScreen").style.display = "block";
-            document.getElementById("startScreen").style.display = "none";
-            startTimer(); // 타이머 시작
-            askQuestion(); // 첫 번째 문제 출제
-        }
-
-        // 문제 출제 함수
-        function askQuestion() {
-            // 예시: 간단한 문제 출제
-            const question = "2 + 2 = ?";
-            const correctAnswer = 4;
-            const userAnswer = prompt(question); // 유저 답을 입력 받음
-
-            if (parseInt(userAnswer) === correctAnswer) {
-                correctAnswers++;
-            } else {
-                wrongAnswers.push({ question, userAnswer, correctAnswer });
-            }
-
-            // 문제 수 카운트 및 점수 표시
-            questionsAnswered++;
-            document.getElementById("score").textContent = "맞은 문제 수: " + correctAnswers;
-        }
-
-        // 타이머 시작
-        function startTimer() {
-            let time = 0;
-            const timerInterval = setInterval(function() {
-                time++;
-                document.getElementById("timer").textContent = "시간: " + time + "초";
-            }, 1000);
-        }
-
-    </script>
-
+    function stopPractice() {
+      clearInterval(practiceInterval);
+      alert('연습이 종료되었습니다!');
+    }
+  </script>
 </body>
 </html>
