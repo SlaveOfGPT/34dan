@@ -148,6 +148,7 @@
       <button class="difficulty-button" onclick="startPractice('medium')">2초</button>
       <button class="difficulty-button" onclick="startPractice('hard')">1초</button>
       <button class="difficulty-button" onclick="startPractice('half')">0.5초</button>
+      <button class="difficulty-button" onclick="startPractice('hhalf')">0.25초</button>
     </div>
     <button onclick="stopPractice()">연습 중단</button>
     <div id="practice-container"></div>
@@ -155,7 +156,7 @@
 
   <script>
     const notes = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
-    const difficultyTimes = { 'easy': 4000, 'medium': 2000, 'hard': 1000, 'half': 500 };
+    const difficultyTimes = { 'easy': 4000, 'medium': 2000, 'hard': 1000, 'half': 500, 'hhalf': 250 };
     let practiceInterval;
 
     function startPractice(difficulty) {
